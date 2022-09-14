@@ -18,10 +18,20 @@ class _CreateUserState extends State<CreateUser> {
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _dob = TextEditingController();
+  bool _isObscure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text("Create User"))),
+      appBar: AppBar(
+        title: const Center(child: Text("Create User")),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.cyanAccent),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const AdminScreen()));
+            }),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -30,6 +40,7 @@ class _CreateUserState extends State<CreateUser> {
             children: [
               // ignore: avoid_unnecessary_containers
               TextField(
+                autofocus: true,
                 controller: _username,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.person_outline_rounded,
@@ -48,6 +59,7 @@ class _CreateUserState extends State<CreateUser> {
               // ignore: avoid_unnecessary_containers
               TextField(
                 controller: _password,
+                obscureText: _isObscure,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.password_rounded,
                       color: Colors.cyanAccent),
@@ -56,6 +68,16 @@ class _CreateUserState extends State<CreateUser> {
                   ),
                   labelText: 'Password',
                   labelStyle: const TextStyle(color: Colors.cyanAccent),
+                  suffixIcon: IconButton(
+                    color: Colors.cyanAccent,
+                    icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                  ),
                 ),
               ),
 
@@ -111,11 +133,20 @@ class _CreateUserState extends State<CreateUser> {
                       "password": _password.text,
                       "DOB": _date.text
                     };
-                    FirebaseFirestore.instance.collection("userlist").add(data);
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const AdminScreen()));
+                    try {
+                      FirebaseFirestore.instance
+                          .collection("userlist")
+                          .add(data);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('You have successfully added a user')));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content:
+                              Text('Something Went Wrong While Adding Data')));
+                    }
+                    _username.clear();
+                    _password.clear();
+                    _date.clear();
                   },
                   child: const Text(
                     'Submit',

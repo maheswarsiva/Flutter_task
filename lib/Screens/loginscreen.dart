@@ -29,6 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // ignore: avoid_unnecessary_containers
+              Container(
+                decoration: BoxDecoration(),
+              ),
               TextField(
                 controller: _idController,
                 decoration: InputDecoration(
@@ -112,10 +115,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       try {
                         if (password == snap.docs[0]['password']) {
                           // ignore: use_build_context_synchronously
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => const AdminScreen()));
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("You are logged in as $id")));
+                          // ignore: use_build_context_synchronously
+
                         } else {
                           // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -144,6 +152,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
+                      boxShadow: const [
+                        // BoxShadow(
+                        //   color: Colors.amberAccent, //New
+                        //   blurRadius: 1.0,
+                        //   offset: Offset(
+                        //     5.5,
+                        //     5.5,
+                        //   ),
+                        // )
+                      ],
                       color: Colors.deepPurple,
                       borderRadius: BorderRadius.circular(30),
                     ),
